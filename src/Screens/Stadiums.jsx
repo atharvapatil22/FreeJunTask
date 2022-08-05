@@ -4,36 +4,101 @@ import {
   FlatList,
   StyleSheet,
   Dimensions,
-  Image,
+  ImageBackground,
+  Button,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "react-native-vector-icons";
+import SearchBar from "../Components/SearchBar";
 
 const Stadiums = () => {
+  const [stadiumsList, setStadiumsList] = useState(temp);
+  const [modifiedList, setModifiedList] = useState(temp);
+
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [sorting, setSorting] = useState("ASC");
+
+  useEffect(() => {
+    modifyList();
+  }, [sorting, searchPhrase]);
+
+  const modifyList = () => {
+    // Apply Search Logic
+    const text = searchPhrase.toLowerCase();
+    const temp = stadiumsList.filter((item) => {
+      return item.name.toLowerCase().includes(text);
+    });
+
+    // Apply Sorting Login
+    if (sorting === "ASC") {
+      setModifiedList(temp.sort((a, b) => (a.name > b.name ? 1 : -1)));
+    }
+    if (sorting === "DESC") {
+      setModifiedList(temp.sort((a, b) => (a.name < b.name ? 1 : -1)));
+    }
+  };
+
   const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
-        <Image
-          style={{
-            height: widthSc * 200,
-            width: widthSc * 200,
-          }}
-          source={{ uri: item.image }}
-        />
-        <View style={{ flex: 1, marginLeft: "4%" }}>
-          <Text style={{ fontSize: 20, fontFamily: "Uchen-Regular" }}>
-            {item.name}
-          </Text>
-        </View>
+        <ImageBackground source={{ uri: item.image }} style={styles.imageBg}>
+          <LinearGradient
+            colors={["#151515d9", "transparent", "#151515d9"]}
+            style={{
+              height: "100%",
+              flex: 1,
+              justifyContent: "space-between",
+              padding: "3%",
+            }}
+          >
+            <View style={styles.textWrapper}>
+              <View style={{ flexDirection: "row" }}>
+                <MaterialIcons name="location-pin" color="white" size={18} />
+                <Text
+                  style={{
+                    color: "white",
+                  }}
+                >
+                  {" "}
+                  {item.location}
+                </Text>
+              </View>
+              <Text style={{ color: "white" }}>
+                <MaterialCommunityIcons
+                  name="human-male-male"
+                  color="white"
+                  size={18}
+                />{" "}
+                {item.capacity}
+              </Text>
+            </View>
+
+            <Text style={{ color: "white", fontSize: 22 }}>{item.name}</Text>
+          </LinearGradient>
+        </ImageBackground>
       </View>
     );
   };
 
   return (
     <View>
+      <SearchBar setSearchPhrase={setSearchPhrase} />
+      <Button
+        title={sorting}
+        onPress={() => {
+          setSorting(sorting === "ASC" ? "DESC" : "ASC");
+        }}
+      />
       <FlatList
-        data={stadiumsList}
+        style={{ backgroundColor: "white" }}
+        data={modifiedList}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        ListEmptyComponent={() => <Text>No Results</Text>}
       />
     </View>
   );
@@ -49,23 +114,35 @@ const styles = StyleSheet.create({
   card: {
     marginVertical: heightSc * 10,
     marginHorizontal: "5%",
-    padding: "4%",
+    height: heightSc * 200,
     backgroundColor: "white",
-    borderRadius: 6,
+    borderRadius: 8,
     shadowColor: "#171717",
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 5,
-
+    elevation: 15,
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "90%",
   },
+  imageBg: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+    opacity: 1,
+    flex: 1,
+  },
+  textWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginRight: "1.5%",
+  },
 });
 
-const stadiumsList = [
+const temp = [
   {
     id: 1,
     name: "Salt Lake Stadium",
