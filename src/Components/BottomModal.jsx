@@ -35,14 +35,6 @@ const BottomModal = (props) => {
   };
 
   useEffect(() => {
-    if (props.closeModal) {
-      // props.setCloseModal(false);
-      // console.log('here in useeffect', props.closeModal);
-      // handleDismiss();
-    }
-  }, []);
-
-  useEffect(() => {
     resetPositionAnim.start();
   }, [resetPositionAnim]);
 

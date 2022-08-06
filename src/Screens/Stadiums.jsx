@@ -5,13 +5,14 @@ import {
   StyleSheet,
   Dimensions,
   ImageBackground,
-  Button,
+  Pressable,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
+  FontAwesome,
 } from "react-native-vector-icons";
 import SearchBar from "../Components/SearchBar";
 import axios from "axios";
@@ -117,25 +118,52 @@ const Stadiums = () => {
   };
 
   return (
-    <View style={{ paddingBottom: heightSc * 120 }}>
+    <View style={{ paddingBottom: heightSc * 160 }}>
       {showLoader && <Loader />}
-      <SearchBar setSearchPhrase={setSearchPhrase} />
-      <Button
-        title={"Sort List"}
+      <SearchBar
+        setSearchPhrase={setSearchPhrase}
+        searchPhrase={searchPhrase}
+      />
+
+      <Pressable
+        style={styles.sortBtn}
         onPress={() => {
           setShowSortingOptions(true);
         }}
-      />
+      >
+        <FontAwesome
+          style={{
+            textAlignVertical: "center",
+            marginRight: "4%",
+          }}
+          name={"sort"}
+          size={22}
+          color={"grey"}
+        />
+        <Text style={{ fontSize: 22 }}>Sort List</Text>
+      </Pressable>
       {showLoader && <Loader />}
       <FlatList
         onEndReached={() => {
           if (hasMoreRecords) setListSize(listSize + PAGE_LIMIT);
         }}
-        style={{ backgroundColor: "white" }}
+        // style={{ backgroundColor: "white" }}
         data={modifiedList}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={() => <Text>No Results</Text>}
+        ListEmptyComponent={() => (
+          <Text
+            style={{
+              marginHorizontal: "5%",
+              fontSize: 22,
+              marginTop: 30,
+              textAlign: "center",
+              color: "grey",
+            }}
+          >
+            No Results
+          </Text>
+        )}
       />
 
       {showSortingOptions && (
@@ -184,5 +212,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginRight: "1.5%",
+  },
+  sortBtn: {
+    marginHorizontal: "5%",
+    marginVertical: heightSc * 16,
+    height: 40,
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+    borderRadius: 8,
   },
 });

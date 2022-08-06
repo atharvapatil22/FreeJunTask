@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import BottomModal from "./BottomModal";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -30,14 +30,7 @@ const SortingOptions = ({ sorting, setSorting, onClose }) => {
                 paddingVertical: "3%",
               }}
             >
-              <View
-                style={{
-                  justifyContent: "space-evenly",
-                  flexDirection: "row",
-                  marginHorizontal: "28%",
-                  alignItems: "center",
-                }}
-              >
+              <View style={styles.optionsWrapper}>
                 <MaterialCommunityIcons
                   name="sort-alphabetical-ascending"
                   size={22}
@@ -60,14 +53,7 @@ const SortingOptions = ({ sorting, setSorting, onClose }) => {
               }}
               style={{ paddingVertical: "3%" }}
             >
-              <View
-                style={{
-                  justifyContent: "space-evenly",
-                  flexDirection: "row",
-                  marginHorizontal: "28%",
-                  alignItems: "center",
-                }}
-              >
+              <View style={styles.optionsWrapper}>
                 <MaterialCommunityIcons
                   name="sort-alphabetical-descending"
                   size={22}
@@ -93,3 +79,12 @@ const SortingOptions = ({ sorting, setSorting, onClose }) => {
 };
 
 export default SortingOptions;
+
+const styles = StyleSheet.create({
+  optionsWrapper: {
+    justifyContent: "space-evenly",
+    flexDirection: "row",
+    marginHorizontal: "28%",
+    alignItems: "center",
+  },
+});
