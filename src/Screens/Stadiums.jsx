@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import LinearGradient from "react-native-linear-gradient";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
@@ -49,7 +49,7 @@ const Stadiums = () => {
     axios
       .get(BaseURL + `/stadiums?page=1&limit=${listSize}`)
       .then((res) => {
-        console.log("Response:", res);
+        // console.log("Response:", res);
         setHasMoreRecords(res.data.hasMore);
         setStadiumsList(res.data.stadiums);
         setModifiedList(res.data.stadiums);
