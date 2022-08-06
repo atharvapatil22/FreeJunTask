@@ -41,7 +41,7 @@ const Players = ({ navigation }) => {
     axios
       .get(BaseURL + `/players?page=1&limit=${listSize}`)
       .then((res) => {
-        console.log("Response:", res.data);
+        // console.log("Response:", res.data);
         setHasMoreRecords(res.data.hasMore);
         dispatch(setPlayersList(res.data.players));
       })
@@ -58,24 +58,30 @@ const Players = ({ navigation }) => {
           style={{
             height: widthSc * 200,
             width: widthSc * 200,
-            borderWidth: 1,
-            borderColor: "grey",
             borderRadius: 100,
+            backgroundColor: "lightgrey",
           }}
           source={{ uri: item.image }}
         />
         <View style={{ flex: 1, marginLeft: "4%" }}>
           <Text
             style={{
-              fontSize: 20,
-              fontFamily: "Uchen-Regular",
+              fontSize: 22,
+              fontFamily: "serif",
+              fontWeight: "700",
+              color: "green",
             }}
           >
             {item.name}
           </Text>
-          <Text>Country:{item.country}</Text>
-          <Text>Age:{item.age}</Text>
-          <Text>Club:{item.club}</Text>
+
+          <Text
+            style={{ color: "grey", fontSize: 14, marginTop: heightSc * 5 }}
+          >
+            Country: <Text style={styles.atributeValue}>{item.country}</Text>
+            {"\n"}Age: <Text style={styles.atributeValue}>{item.age}</Text>
+            {"\n"}Club: <Text style={styles.atributeValue}>{item.club}</Text>
+          </Text>
         </View>
       </View>
     );
@@ -120,6 +126,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "90%",
+  },
+  atributeValue: {
+    color: "black",
+    fontWeight: "bold",
   },
 });

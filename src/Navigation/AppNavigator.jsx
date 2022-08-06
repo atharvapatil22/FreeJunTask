@@ -18,7 +18,6 @@ const AppNavigator = () => {
             source={require("../assets/images/app_logo.png")}
           />
         ),
-        headerStyle: { fontFamily: "Uchen-Regular" },
         tabBarLabelStyle: {
           fontFamily: "sans-serif",
           fontWeight: "bold",
