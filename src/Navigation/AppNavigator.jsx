@@ -2,9 +2,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import Stadiums from "../Screens/Stadiums";
 import Players from "../Screens/Players";
-import Tab3 from "../Screens/Tab3";
 import { MaterialCommunityIcons, Ionicons } from "react-native-vector-icons";
-import { Image, View } from "react-native";
+import { Image } from "react-native";
+import Bridge from "../Screens/Bridge";
 
 const Tab = createBottomTabNavigator();
 
@@ -54,12 +54,12 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Tab3"
-        component={Tab3}
+        name="Bridge"
+        component={Bridge}
         options={{
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
-              name="home-floor-3"
+              name="bridge"
               size={25}
               color={focused ? "green" : "grey"}
             />

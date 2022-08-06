@@ -138,9 +138,9 @@ const Stadiums = () => {
           }}
           name={"sort"}
           size={22}
-          color={"grey"}
+          color={"green"}
         />
-        <Text style={{ fontSize: 22 }}>Sort List</Text>
+        <Text style={{ fontSize: 22, color: "green" }}>Sort List</Text>
       </Pressable>
       {showLoader && <Loader />}
       <FlatList
