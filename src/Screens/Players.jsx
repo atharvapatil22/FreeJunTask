@@ -9,8 +9,14 @@ import {
 import React, { useEffect } from "react";
 import axios from "axios";
 import { BaseURL } from "../../environment";
+import { useDispatch, useSelector } from "react-redux";
+import { setPlayersList } from "../redux/actions";
 
 const Players = () => {
+  const dispatch = useDispatch();
+
+  const playersList = useSelector((state) => state.globalData.playersList);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -19,7 +25,8 @@ const Players = () => {
     axios
       .get(BaseURL + "/players?page=1&limit=10")
       .then((res) => {
-        console.log("Response:", res);
+        console.log("Response:", res.data.players);
+        dispatch(setPlayersList(res.data.players));
       })
       .catch((err) => {
         console.log("Error:", err);
@@ -87,39 +94,3 @@ const styles = StyleSheet.create({
     width: "90%",
   },
 });
-
-// Hard coded for now
-const playersList = [
-  {
-    id: 1,
-    name: "Messi",
-    country: "Argentina",
-    age: 35,
-    club: "Paris Saint Germain",
-    image: "https://cdn.sofifa.net/players/158/023/21_240.png",
-  },
-  {
-    id: 2,
-    name: "Ronaldo",
-    country: "Portugal",
-    age: 38,
-    club: "Manchester United",
-    image: "https://cdn.sofifa.net/players/020/801/21_240.png",
-  },
-  {
-    id: 3,
-    name: "Kevin De Bruyne",
-    country: "Belgium",
-    age: 25,
-    club: "Manchester City",
-    image: "https://cdn.sofifa.net/players/192/985/21_240.png",
-  },
-  {
-    id: 4,
-    name: "Neymar",
-    country: "Brazil",
-    age: 30,
-    club: "Paris Saint Germain",
-    image: "https://cdn.sofifa.net/players/190/871/21_240.png",
-  },
-];
