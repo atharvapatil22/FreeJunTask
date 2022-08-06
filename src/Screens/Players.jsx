@@ -6,9 +6,26 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
+import { BaseURL } from "../../environment";
 
 const Players = () => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    axios
+      .get(BaseURL + "/players?page=1&limit=10")
+      .then((res) => {
+        console.log("Response:", res);
+      })
+      .catch((err) => {
+        console.log("Error:", err);
+      });
+  };
+
   const renderItem = ({ item }) => {
     return (
       <View style={styles.playerCard}>
