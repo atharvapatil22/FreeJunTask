@@ -6,31 +6,49 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BaseURL } from "../../environment";
 import { useDispatch, useSelector } from "react-redux";
 import { setPlayersList } from "../redux/actions";
+import Loader from "../Components/Loader";
 
-const Players = () => {
+const Players = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const playersList = useSelector((state) => state.globalData.playersList);
+  const PAGE_LIMIT = 10;
+
+  const [showLoader, setShowLoader] = useState(false);
+  const [listSize, setListSize] = useState(PAGE_LIMIT);
+  const [hasMoreRecords, setHasMoreRecords] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    //  onEndReached -> full list will be re-fetched with new size. So, if any crud operation happens while loading then the changes will be reflected
+    fetchData();
+  }, [listSize]);
 
   const fetchData = () => {
+    setShowLoader(true);
     axios
-      .get(BaseURL + "/players?page=1&limit=10")
+      .get(BaseURL + `/players?page=1&limit=${listSize}`)
       .then((res) => {
-        console.log("Response:", res.data.players);
+        console.log("Response:", res.data);
+        setHasMoreRecords(res.data.hasMore);
         dispatch(setPlayersList(res.data.players));
       })
       .catch((err) => {
         console.log("Error:", err);
-      });
+      })
+      .finally(() => setShowLoader(false));
   };
 
   const renderItem = ({ item }) => {
@@ -47,7 +65,12 @@ const Players = () => {
           source={{ uri: item.image }}
         />
         <View style={{ flex: 1, marginLeft: "4%" }}>
-          <Text style={{ fontSize: 20, fontFamily: "Uchen-Regular" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: "Uchen-Regular",
+            }}
+          >
             {item.name}
           </Text>
           <Text>Country:{item.country}</Text>
@@ -59,8 +82,14 @@ const Players = () => {
   };
 
   return (
-    <View>
+    <View style={{ height: "100%" }}>
+      {showLoader && <Loader />}
       <FlatList
+        refreshing={showLoader}
+        onRefresh={() => fetchData()}
+        onEndReached={() => {
+          if (hasMoreRecords) setListSize(listSize + PAGE_LIMIT);
+        }}
         data={playersList}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
