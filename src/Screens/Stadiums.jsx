@@ -17,6 +17,7 @@ import SearchBar from "../Components/SearchBar";
 import axios from "axios";
 import { BaseURL } from "../../environment";
 import Loader from "../Components/Loader";
+import SortingOptions from "../Components/SortingOptions";
 
 const Stadiums = () => {
   const PAGE_LIMIT = 10;
@@ -27,7 +28,8 @@ const Stadiums = () => {
   const [hasMoreRecords, setHasMoreRecords] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
-  const [sorting, setSorting] = useState("ASC");
+  const [sorting, setSorting] = useState(null);
+  const [showSortingOptions, setShowSortingOptions] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -48,11 +50,8 @@ const Stadiums = () => {
       .then((res) => {
         console.log("Response:", res);
         setHasMoreRecords(res.data.hasMore);
-        const temp = res.data.stadiums.sort((a, b) =>
-          a.name > b.name ? 1 : -1
-        );
-        setStadiumsList(temp);
-        setModifiedList(temp);
+        setStadiumsList(res.data.stadiums);
+        setModifiedList(res.data.stadiums);
       })
       .catch((err) => {
         console.log("Error:", err);
@@ -70,10 +69,9 @@ const Stadiums = () => {
     // Apply Sorting Login
     if (sorting === "ASC") {
       setModifiedList(temp.sort((a, b) => (a.name > b.name ? 1 : -1)));
-    }
-    if (sorting === "DESC") {
+    } else if (sorting === "DESC") {
       setModifiedList(temp.sort((a, b) => (a.name < b.name ? 1 : -1)));
-    }
+    } else setModifiedList(temp);
   };
 
   const renderItem = ({ item }) => {
@@ -123,9 +121,9 @@ const Stadiums = () => {
       {showLoader && <Loader />}
       <SearchBar setSearchPhrase={setSearchPhrase} />
       <Button
-        title={sorting}
+        title={"Sort List"}
         onPress={() => {
-          setSorting(sorting === "ASC" ? "DESC" : "ASC");
+          setShowSortingOptions(true);
         }}
       />
       {showLoader && <Loader />}
@@ -139,6 +137,14 @@ const Stadiums = () => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={() => <Text>No Results</Text>}
       />
+
+      {showSortingOptions && (
+        <SortingOptions
+          sorting={sorting}
+          setSorting={setSorting}
+          onClose={() => setShowSortingOptions(false)}
+        />
+      )}
     </View>
   );
 };
@@ -180,36 +186,3 @@ const styles = StyleSheet.create({
     marginRight: "1.5%",
   },
 });
-
-const temp = [
-  {
-    id: 1,
-    name: "Salt Lake Stadium",
-    capacity: "85,000",
-    location: "Kolkata",
-    image:
-      "https://www.kreedon.com/wp-content/uploads/2019/08/c037152e-960e-11e7-afc5-62fc49bb3ae4.jpg",
-  },
-  {
-    id: 2,
-    name: "Jawaharlal Nehru Stadium",
-    capacity: "60,000",
-    location: "Delhi",
-    image: "https://www.kreedon.com/wp-content/uploads/2019/08/JNS-MA.jpg",
-  },
-  {
-    id: 3,
-    name: "DY Patil Stadium",
-    capacity: "55,000",
-    location: "Navi Mumbai",
-    image: "https://www.kreedon.com/wp-content/uploads/2019/08/1-981x420.jpg",
-  },
-  {
-    id: 4,
-    name: "Sree Kanteerava Stadium",
-    capacity: "25,000",
-    location: "Bengaluru",
-    image:
-      "https://www.kreedon.com/wp-content/uploads/2019/08/jln-stadium-kochi-sarath-rk.jpg",
-  },
-];
