@@ -14,17 +14,51 @@ import {
   MaterialIcons,
 } from "react-native-vector-icons";
 import SearchBar from "../Components/SearchBar";
+import axios from "axios";
+import { BaseURL } from "../../environment";
+import Loader from "../Components/Loader";
 
 const Stadiums = () => {
-  const [stadiumsList, setStadiumsList] = useState(temp);
-  const [modifiedList, setModifiedList] = useState(temp);
+  const PAGE_LIMIT = 10;
 
+  const [stadiumsList, setStadiumsList] = useState([]);
+  const [modifiedList, setModifiedList] = useState([]);
+  const [listSize, setListSize] = useState(PAGE_LIMIT);
+  const [hasMoreRecords, setHasMoreRecords] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [sorting, setSorting] = useState("ASC");
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     modifyList();
   }, [sorting, searchPhrase]);
+
+  useEffect(() => {
+    fetchData();
+  }, [listSize]);
+
+  const fetchData = () => {
+    setShowLoader(true);
+    axios
+      .get(BaseURL + `/stadiums?page=1&limit=${listSize}`)
+      .then((res) => {
+        console.log("Response:", res);
+        setHasMoreRecords(res.data.hasMore);
+        const temp = res.data.stadiums.sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        );
+        setStadiumsList(temp);
+        setModifiedList(temp);
+      })
+      .catch((err) => {
+        console.log("Error:", err);
+      })
+      .finally(() => setShowLoader(false));
+  };
 
   const modifyList = () => {
     // Apply Search Logic
@@ -85,7 +119,8 @@ const Stadiums = () => {
   };
 
   return (
-    <View>
+    <View style={{ paddingBottom: heightSc * 120 }}>
+      {showLoader && <Loader />}
       <SearchBar setSearchPhrase={setSearchPhrase} />
       <Button
         title={sorting}
@@ -93,7 +128,11 @@ const Stadiums = () => {
           setSorting(sorting === "ASC" ? "DESC" : "ASC");
         }}
       />
+      {showLoader && <Loader />}
       <FlatList
+        onEndReached={() => {
+          if (hasMoreRecords) setListSize(listSize + PAGE_LIMIT);
+        }}
         style={{ backgroundColor: "white" }}
         data={modifiedList}
         renderItem={renderItem}
